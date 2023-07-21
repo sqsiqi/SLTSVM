@@ -1,0 +1,23 @@
+function [KAC,KBC,Y1]=RBF(X,Y,sigma)
+A=[X,Y];
+y1=A(A(:,end)==1,end);
+y2=A(A(:,end)==-1,end);
+Y1=[y1;y2];
+x1=A(A(:,end)==1,1:end-1);
+x2=A(A(:,end)==-1,1:end-1);
+x1=x1';
+x2=x2';
+X=X';
+delta = 2*sigma*sigma;
+XX1 = sum(x1'.*x1',2);    
+YY1 = sum(X'.*X',2);
+XY1 = x1'*X;
+K1 = abs(repmat(XX1,[1 size(YY1,1)]) + repmat(YY1',[size(XX1,1) 1]) - 2*XY1);
+KAC1 = exp(-K1./delta);
+XX2 = sum(x2'.*x2',2);     
+YY2 = sum(X'.*X',2);
+XY2 = x2'*X;
+K2 = abs(repmat(XX2,[1 size(YY2,1)]) + repmat(YY2',[size(XX2,1) 1]) - 2*XY2);
+KAC2 = exp(-K2./delta);
+KAC=[KAC1,ones(size(KAC1,1),1)];
+KBC=[KAC2,ones(size(KAC2,1),1)];
